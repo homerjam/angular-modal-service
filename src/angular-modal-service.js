@@ -23,7 +23,7 @@
 
                 //  Returns a promise which gets the template, either
                 //  from the template parameter or via a request to the
-                //  template url parameter.
+                //  templateUrl parameter.
                 var getTemplate = function(template, templateUrl) {
                     var deferred = $q.defer();
 
@@ -31,29 +31,24 @@
                         deferred.resolve(template);
 
                     } else if (templateUrl) {
-                        // check to see if the template has already been loaded
+                        //  Check to see if the template has already been loaded.
                         var cachedTemplate = $templateCache.get(templateUrl);
 
-                        if (cachedTemplate !== undefined) {
+                        if (cachedTemplate) {
                             deferred.resolve(cachedTemplate);
-                        }
 
-                        // if not, let's grab the template for the first time
-                        else {
-                            $http({
-                                    method: 'GET',
-                                    url: templateUrl,
-                                    cache: true
-                                })
-                                .then(function(result) {
-                                    // save template into the cache and return the template
-                                    $templateCache.put(templateUrl, result.data);
+                        } else {
+                            //  If not, let's grab the template for the first time.
+                            $http.get(templateUrl).then(function(result) {
 
-                                    deferred.resolve(result.data);
+                                //  Save template into the cache and return the template.
+                                $templateCache.put(templateUrl, result.data);
 
-                                }, function(error) {
-                                    deferred.reject(error);
-                                });
+                                deferred.resolve(result.data);
+
+                            }, function(error) {
+                                deferred.reject(error);
+                            });
                         }
 
                     } else {
@@ -132,10 +127,10 @@
                                 //  We can now clean up the scope
                                 modalScope.$destroy();
 
-                                //  ... and remove the element from the DOM.
+                                //  ... and remove the element from the DOM
                                 modalElement.remove();
 
-                                //  ... and remove keydown listener
+                                //  ... and finally remove keydown listener.
                                 $document.off('keydown', keyDownHandler);
                             };
 
@@ -144,8 +139,8 @@
                                 dismiss: dismiss
                             };
 
-                            //  Listen for escape key press and dismiss modal
                             var keyDownHandler = function(e) {
+                                //  Listen for escape key and dismiss modal.
                                 if (e.keyCode === 27) {
                                     dismiss();
                                 }
@@ -157,7 +152,7 @@
 
                             var controller = options.controller || function() {};
 
-                            //  Pass inputs to controller scope
+                            //  Pass inputs to scope.
                             if (typeof controller === 'string' || !options.controllerAs) {
                                 modalScope = angular.extend(modalScope, options.inputs || {});
 
